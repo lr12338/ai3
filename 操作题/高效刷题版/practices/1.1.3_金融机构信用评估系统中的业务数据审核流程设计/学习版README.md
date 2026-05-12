@@ -45,3 +45,30 @@ print(stats)
 - 先看 `exam_preview.html` 理解题面。
 - 再做 `example.ipynb` 或 `answer_template.docx`。
 - 最后对照题目要求检查文件保存格式与命名。
+
+## 知识点复习
+
+data = pd.read_csv(')
+
+### 统计空值与重复值
+missing_values = data.isnull().sum() # data.isnull() 布尔矩阵，True表示对应位置为缺失值  .sum()统计所有为True
+duplicate_values = data.dumplicated().sum() # data.dumplicated() 布尔矩阵，True表示对应位置为重复值  .sum()统计所有为True
+
+### 数据的合理性审核
+data['is_age_valid'] = data['age'].between(18, 70)
+data['is_income_valid'] = data['income'] > 2000
+data['is_loan_valid'] = data['LoanTerm'] < ( data['income'] * 5 )
+data['is_credit_valid'] = data['CreditScore'].between(300, 850)
+    # 对每一行的所有布尔列进行 “与” 运算，只有全部为True时，结果才为True , axis=1表示按行操作，axis=0表示按列操作（高频考点）
+    # data[['','']] 处理多列数据用双层中括号
+valid_checks = data[['is_age_valid','is_income_valid','is_loan_valid','is_credit_valid']].all(axis=1) 
+data['is_valid'] = valid_checks
+
+print("检查结果")
+print(data[['is_age_valid','is_income_valid','is_loan_valid','is_credit_valid']].describe()) # 结果统计
+
+### 数据清洗与异常值处理
+cleaned_data = data[data['is_valid']]# data['is_valid']是布尔类型的值，data[布尔数据]只保留 true 值，生成新表格
+cleaned_data = cleaned_data.drop[colums=['is_age_valid', 'is_income_valid','is_loan_amount_valid', 'is_credit_score_valid', 'is_valid]]
+
+cleaned_data.to_csv('cleaned_credit_data.csv',index=False)
