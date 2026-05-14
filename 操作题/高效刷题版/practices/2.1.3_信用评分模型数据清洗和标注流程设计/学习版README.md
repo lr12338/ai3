@@ -1,51 +1,48 @@
 # 2.1.3 信用评分模型数据清洗和标注流程设计 学习版
 
-## 题目要点
+## 一、代码题目要求（来自刷题模板）
 
-- 题型定位：数据清洗、预处理与标注流程设计
-- 这是最模板化的一组题，重点在流程完整。
-- 常见动作包括缺失值处理、类型转换、标准化、特征选择、训练测试集划分。
-- 文字部分通常要写“数据清洗规范”和“数据标注规范”。
+1. 读取 `data/finance数据集.csv` 并查看前 5 行。
+2. 使用箱线图（`12x8` 画布、`3x4` 子图）检查异常值。
+3. 使用 IQR 规则处理异常值。
+4. 删除重复值并统计删除行数。
+5. 对数据做归一化（`MinMaxScaler`）。
+6. 创建新特征 `IncomeToDebtRatio`（题面要求）并纳入特征工程流程。
+7. 目标变量设为 `SeriousDlqin2yrs`，按 8:2 划分数据。
+8. 保存 `2.1.3_cleaned_data.csv`，并准备 `2.1.3.docx` 与 `2.1.3.html`。
 
-## 解题步骤
+## 二、example.ipynb 考察要点（填空位）
 
-1. 读取数据，查看前几行和字段类型。
-2. 统计缺失值并处理异常值或错误类型。
-3. 对必要的数值字段做标准化处理。
-4. 明确特征列和目标变量。
-5. 划分训练集与测试集，保存清洗结果和规范文档。
+- `pd.read_csv()` 与前 5 行展示。
+- `numeric_cols` 提取后循环绘制箱线图。
+- `Q1/Q3/IQR` 计算与布尔掩码去异常。
+- `duplicated()` + 统计重复行数量。
+- `MinMaxScaler().fit_transform()` 归一化流程。
+- `target_variable`、`drop(columns=...)`、`y` 设置。
+- `train_test_split` 参数完整性。
+- `to_csv(index=False)` 导出。
 
-## 高频代码模板
+## 三、文本题（2.1.3.docx）作答要点
 
-```python
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+### 数据清洗规范
 
-data = pd.read_csv("data/xxx.csv")
-print(data.head())
-print(data.isnull().sum())
+- 先做异常值识别（箱线图 + IQR），再做重复值处理。
+- 对连续变量统一归一化，避免量纲影响评分模型。
+- 清洗顺序建议固定：异常值 -> 重复值 -> 归一化 -> 划分。
+- 删除规则要可追溯（阈值、处理数量、保留数量）。
+- 输出数据版本必须与文档说明一致。
 
-data["某列"] = pd.to_numeric(data["某列"], errors="coerce")
-data = data.dropna()
+### 特征工程与标注规范
 
-scaler = StandardScaler()
-data[num_cols] = scaler.fit_transform(data[num_cols])
-```
+- 目标变量固定为 `SeriousDlqin2yrs`（违约标记）。
+- 明确新特征构造口径，例如 `IncomeToDebtRatio = MonthlyIncome / Debt`（按实际字段名实现）。
+- 新增特征必须记录来源字段、公式与异常保护（分母为 0 的处理）。
+- 划分训练测试集前完成全部清洗与特征构造，避免泄漏。
+- 保证命名规范与提交文件一致。
 
-## 易错点
+## 四、易错点速记
 
-- 只做代码，不写答题卷中的清洗规范/标注规范。
-- 把目标变量也一起标准化或错误放进特征列。
-- 导出文件名和格式不对。
-
-## 5分钟速记版
-
-- 五步法：看结构、查缺失、转类型、做标准化、定特征与目标。
-- 文字题至少准备 4-6 条规范表达。
-
-## 建议练习顺序
-
-- 先看 `exam_preview.html` 理解题面。
-- 再做 `example.ipynb` 或 `answer_template.docx`。
-- 最后对照题目要求检查文件保存格式与命名。
+- 箱线图画了但没有真正执行 IQR 过滤。
+- 归一化时把目标变量一起变换。
+- 忽略题面“新增特征”要求，只做基础清洗。
+- 子图布局或画布尺寸与题目要求不一致。

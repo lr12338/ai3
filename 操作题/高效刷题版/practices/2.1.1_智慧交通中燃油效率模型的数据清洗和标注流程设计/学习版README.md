@@ -1,51 +1,46 @@
 # 2.1.1 智慧交通中燃油效率模型的数据清洗和标注流程设计 学习版
 
-## 题目要点
+## 一、代码题目要求（来自刷题模板）
 
-- 题型定位：数据清洗、预处理与标注流程设计
-- 这是最模板化的一组题，重点在流程完整。
-- 常见动作包括缺失值处理、类型转换、标准化、特征选择、训练测试集划分。
-- 文字部分通常要写“数据清洗规范”和“数据标注规范”。
+1. 读取 `data/auto-mpg.csv`，输出前 5 行与字段类型。
+2. 检查缺失值并删除缺失行。
+3. 将 `horsepower` 转为数值（`errors='coerce'`）并清理转换异常。
+4. 对数值特征做标准化：`displacement`、`horsepower`、`weight`、`acceleration`。
+5. 按题目指定选择特征：`cylinders`、`displacement`、`horsepower`、`weight`、`acceleration`、`model year`、`origin`。
+6. 将 `mpg` 设为目标变量并完成标注。
+7. 按 8:2 划分训练集与测试集。
+8. 保存 `2.1.1_cleaned_data.csv`，并准备 `2.1.1.docx` 与 `2.1.1.html`。
 
-## 解题步骤
+## 二、example.ipynb 考察要点（填空位）
 
-1. 读取数据，查看前几行和字段类型。
-2. 统计缺失值并处理异常值或错误类型。
-3. 对必要的数值字段做标准化处理。
-4. 明确特征列和目标变量。
-5. 划分训练集与测试集，保存清洗结果和规范文档。
+- `pd.read_csv()`、`head()`、`isnull().sum()`、`dropna()` 基础清洗链。
+- `pd.to_numeric(..., errors='coerce')` 与 `dropna(subset=...)` 联动。
+- `StandardScaler().fit_transform(...)` 的标准化写法。
+- 目标变量与特征拆分：`X = data[selected_features]`，`y = data['mpg']`。
+- `train_test_split(..., test_size=0.2, random_state=42)` 参数完整性。
+- 导出要求：`to_csv(..., index=False)`。
 
-## 高频代码模板
+## 三、文本题（2.1.1.docx）作答要点
 
-```python
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+### 数据清洗规范
 
-data = pd.read_csv("data/xxx.csv")
-print(data.head())
-print(data.isnull().sum())
+- 明确原始字段类型检查规则（数值、类别、日期）。
+- 缺失值处理采用“删除缺失行”，并记录处理前后样本量。
+- 对 `horsepower` 的非法字符统一转 `NaN` 后剔除，避免脏值入模。
+- 标准化仅作用于连续数值字段，类别字段不进行同类变换。
+- 清洗流程应具备可复现性（固定步骤、固定参数、固定随机种子）。
 
-data["某列"] = pd.to_numeric(data["某列"], errors="coerce")
-data = data.dropna()
+### 数据标注规范
 
-scaler = StandardScaler()
-data[num_cols] = scaler.fit_transform(data[num_cols])
-```
+- 目标变量统一定义为 `mpg`，并写明业务含义（燃油效率）。
+- 特征命名与字段口径保持一致，不随意重命名导致映射丢失。
+- 数据集划分比例固定 8:2，随机种子固定为 42。
+- 训练/测试集来源应同分布，避免信息泄漏。
+- 文件命名按题面统一：`2.1.1_cleaned_data.csv`、`2.1.1.docx`、`2.1.1.html`。
 
-## 易错点
+## 四、易错点速记
 
-- 只做代码，不写答题卷中的清洗规范/标注规范。
-- 把目标变量也一起标准化或错误放进特征列。
-- 导出文件名和格式不对。
-
-## 5分钟速记版
-
-- 五步法：看结构、查缺失、转类型、做标准化、定特征与目标。
-- 文字题至少准备 4-6 条规范表达。
-
-## 建议练习顺序
-
-- 先看 `exam_preview.html` 理解题面。
-- 再做 `example.ipynb` 或 `answer_template.docx`。
-- 最后对照题目要求检查文件保存格式与命名。
+- 把 `mpg` 误放进标准化特征列表。
+- 忘记对 `horsepower` 做数值转换，导致模型前报错。
+- `train_test_split` 参数不完整（漏 `test_size` 或 `random_state`）。
+- 导出 CSV 忘记 `index=False`。
